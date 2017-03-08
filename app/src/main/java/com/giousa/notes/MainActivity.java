@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import butterknife.ButterKnife;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase mDatabaseReader;
     private Intent mIntent;
     private MyAdapter mMyAdapter;
+    private Cursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,20 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         initDatabase();
+
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                mCursor.moveToPosition(position);
+                Intent i = new Intent(MainActivity.this,SelectActivity.class);
+                i.putExtra(NotesDB.ID,mCursor.getInt(mCursor.getColumnIndex(NotesDB.ID)));
+                i.putExtra(NotesDB.CONTENT,mCursor.getString(mCursor.getColumnIndex(NotesDB.CONTENT)));
+                i.putExtra(NotesDB.TIME,mCursor.getString(mCursor.getColumnIndex(NotesDB.TIME)));
+                i.putExtra(NotesDB.PATH,mCursor.getString(mCursor.getColumnIndex(NotesDB.PATH)));
+                i.putExtra(NotesDB.VIDEO,mCursor.getString(mCursor.getColumnIndex(NotesDB.VIDEO)));
+                startActivity(i);
+            }
+        });
 
     }
 
@@ -64,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectDB(){
-        Cursor cursor = mDatabaseReader.query(NotesDB.TABLE_NAME, null, null, null,null,null,null);
-        mMyAdapter = new MyAdapter(this,cursor);
+        mCursor = mDatabaseReader.query(NotesDB.TABLE_NAME, null, null, null,null,null,null);
+        mMyAdapter = new MyAdapter(this, mCursor);
         mList.setAdapter(mMyAdapter);
     }
 
