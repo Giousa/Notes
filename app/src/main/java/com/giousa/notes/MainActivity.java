@@ -43,15 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
         switch (view.getId()) {
             case R.id.btn_text:
-                mIntent.putExtra("flag","1");
+                mIntent.putExtra("flag",1);
                 startActivity(mIntent);
                 break;
             case R.id.btn_img:
-                mIntent.putExtra("flag","2");
+                mIntent.putExtra("flag",2);
                 startActivity(mIntent);
                 break;
             case R.id.btn_video:
-                mIntent.putExtra("flag","3");
+                mIntent.putExtra("flag",3);
                 startActivity(mIntent);
                 break;
         }
