@@ -41,7 +41,7 @@ public class AddContentActivity extends Activity {
     private int mFlag;
     private NotesDB mNotesDB;
     private SQLiteDatabase mDatabaseWriter;
-    private File mPhoneFile;
+    private File mPhoneFile,mVideoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +83,14 @@ public class AddContentActivity extends Activity {
 
             case 3:
                 System.out.println("---3---");
-
                 mImg.setVisibility(View.GONE);
                 mVideo.setVisibility(View.VISIBLE);
+                mImg.setVisibility(View.VISIBLE);
+                mVideo.setVisibility(View.GONE);
+                Intent intentVideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                mVideoFile = new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/"+getTime()+".mp4");
+                intentVideo.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mVideoFile));
+                startActivityForResult(intentVideo,2);
                 break;
 
         }
@@ -97,7 +102,7 @@ public class AddContentActivity extends Activity {
         cv.put(NotesDB.CONTENT, mEditText.getText().toString());
         cv.put(NotesDB.TIME, getTime());
         cv.put(NotesDB.PATH, mPhoneFile+"");
-        cv.put(NotesDB.VIDEO, "video");
+        cv.put(NotesDB.VIDEO, mVideoFile+"");
         mDatabaseWriter.insert(NotesDB.TABLE_NAME, null, cv);
     }
 
@@ -126,18 +131,16 @@ public class AddContentActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        System.out.println("onActivityResult");
-
         switch (requestCode){
 
             case 1:
-                System.out.println("-------onActivityResult-----");
                 Bitmap bitmap = BitmapFactory.decodeFile(mPhoneFile.getAbsolutePath());
                 mImg.setImageBitmap(bitmap);
                 break;
 
             case 2:
-
+                mVideo.setVideoURI(Uri.fromFile(mVideoFile));
+                mVideo.start();
                 break;
 
         }
